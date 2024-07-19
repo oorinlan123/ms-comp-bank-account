@@ -1,0 +1,3 @@
+spring.application.name=ms-comp-order
+spring.profiles.active=development
+spring.cloud.config.uri=http://ms-core-config-server:2013/ms-core-config-server/parameter/v1.0

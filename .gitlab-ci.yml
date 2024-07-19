@@ -1,0 +1,23 @@
+variables:
+  GIT_SSL_NO_VERIFY: "true"
+  CI_REGISTRY_USER: "sonar-runner"
+  MAVEN_OPTS: "-Dmaven.repo.local=/dependencias-m2/.m2/repository"
+  MAVEN_CLI_OPTS: "-s /dependencias-m2/.m2/settings-artifactory-test.xml --batch-mode"
+
+stages:
+  - VALIDATION
+  - BUILD
+  - IMAGES
+  - DEPLOY
+  - MERGE
+
+include:
+  - template: microservice-dev-validation-katvtk.gitlab-ci.yml
+  - template: microservice-dev-sonar.gitlab-ci.yml
+  - template: microservice-test-build-katvtk.gitlab-ci.yml
+  - template: microservice-test-create-image.gitlab-ci.yml
+  - template: microservice-test-deploy-katvtk.gitlab-ci.yml
+  - template: microservice-prod-build-katvtk.gitlab-ci.yml
+  - template: microservice-prod-create-image.gitlab-ci.yml
+  - template: microservice-prod-deploy-katvtk.gitlab-ci.yml
+  - template: microservice-prod-merge.gitlab-ci.yml

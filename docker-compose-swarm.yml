@@ -1,0 +1,40 @@
+version: "3.9"
+
+services:
+  NAME_SERVICE:
+    image: IMAGE
+    hostname: NOMBRE_CONTENEDOR
+    domainname: nttdata.ec
+    restart: always
+    environment:
+      - ipkfa=IPSKAFKA
+    networks:
+      - microservicio_swarm
+    extra_hosts:
+      - "kafka-N:IPKAFKA"
+    volumes:
+      - DIR_AMBIENTE/log4j2.xml:/app/build/config/log4j2.xml
+      - DIR_AMBIENTE/bootstrap.properties:/app/build/config/bootstrap.properties
+      - PARAM2:/logs/
+    deploy:
+      placement:
+        constraints:
+          - "node.labels.Backend == true"
+        max_replicas_per_node: 1
+      resources:
+        limits:
+          cpus: '1'
+          memory: 2G
+      replicas: $numero_replicas_swarm
+      labels:
+        - traefik.enable=true
+        - traefik.http.services.NAME_SERVICE.loadbalancer.server.port=PUERTO
+        - traefik.http.routers.NAME_SERVICE.rule=Host(`ENVIRONMENTURL`) && PathPrefix(`/PATHPREF`)
+        - traefik.http.routers.NAME_SERVICE.service=NAME_SERVICE
+        - traefik.docker.network=microservicio_swarm
+        - traefik.http.routers.NAME_SERVICE.entrypoints=web
+
+networks:
+  microservicio_swarm:
+    external:
+      name: microservicio_swarm
